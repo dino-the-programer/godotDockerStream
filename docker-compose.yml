@@ -1,0 +1,26 @@
+services:
+  godot-desktop:
+    build: .
+    container_name: godot_desktop
+    ports:
+      - "6901:6901"
+    environment:
+      - VNC_PW=password
+    volumes:
+      - ./workspace:/home/kasm-user/workspace
+    shm_size: "2gb"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  nginx:
+    image: nginx:latest
+    container_name: godot_proxy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - godot-desktop
